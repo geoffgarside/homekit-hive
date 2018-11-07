@@ -8,7 +8,6 @@ import (
 )
 
 type loginResponse struct {
-	jsonMetadata
 	Sessions []session `json:"sessions,omitempty"`
 }
 
