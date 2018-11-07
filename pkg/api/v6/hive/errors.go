@@ -10,6 +10,8 @@ const (
 	ErrInternal            = "INTERNAL"
 	ErrInvalidJSON         = "INVALID_JSON"
 	ErrInvalidLoginRespose = "INVALID_LOGIN_RESPONSE"
+	ErrInvalidNodeType     = "INVALID_NODE_TYPE"
+	ErrInvalidNodeJSON     = "INVALID_NODE_JSON"
 )
 
 // Error codes from Hive API
