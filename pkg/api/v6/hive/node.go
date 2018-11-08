@@ -48,6 +48,73 @@ type nodeAttribute struct {
 	ReportChangedTime  int64       `json:"reportChangedTime,omitempty"`  // 1528575087449
 }
 
+func (na *nodeAttribute) int64(v interface{}) (i int64, ok bool) {
+	ok = true
+
+	switch v.(type) {
+	case int:
+		ii := v.(int)
+		i = int64(ii)
+	case int8:
+		ii := v.(int8)
+		i = int64(ii)
+	case int16:
+		ii := v.(int16)
+		i = int64(ii)
+	case int32:
+		ii := v.(int32)
+		i = int64(ii)
+	case int64:
+		ii := v.(int64)
+		i = int64(ii)
+	default:
+		ok = false
+	}
+
+	return
+}
+
+func (na *nodeAttribute) uint64(v interface{}) (i uint64, ok bool) {
+	ok = true
+
+	switch v.(type) {
+	case int:
+		ii := v.(int)
+		i = uint64(ii)
+	case uint:
+		ii := v.(uint)
+		i = uint64(ii)
+	case int8:
+		ii := v.(int8)
+		i = uint64(ii)
+	case uint8:
+		ii := v.(uint8)
+		i = uint64(ii)
+	case int16:
+		ii := v.(int16)
+		i = uint64(ii)
+	case uint16:
+		ii := v.(uint16)
+		i = uint64(ii)
+	case int32:
+		ii := v.(int32)
+		i = uint64(ii)
+	case uint32:
+		ii := v.(uint32)
+		i = uint64(ii)
+	case int64:
+		ii := v.(int64)
+		i = uint64(ii)
+	case uint64:
+		ii := v.(uint64)
+		i = uint64(ii)
+	default:
+		ok = false
+	}
+
+	return
+}
+
 func (na *nodeAttribute) ReportedValueString() (s string, ok bool) {
 	s, ok = na.ReportedValue.(string)
 	return
@@ -64,13 +131,11 @@ func (na *nodeAttribute) ReportedValueFloat() (f float64, ok bool) {
 }
 
 func (na *nodeAttribute) ReportedValueInt() (i int64, ok bool) {
-	i, ok = na.ReportedValue.(int64)
-	return
+	return na.int64(na.ReportedValue)
 }
 
 func (na *nodeAttribute) ReportedValueUint() (i uint64, ok bool) {
-	i, ok = na.ReportedValue.(uint64)
-	return
+	return na.uint64(na.ReportedValue)
 }
 
 func (na *nodeAttribute) DisplayValueString() (s string, ok bool) {
@@ -89,13 +154,11 @@ func (na *nodeAttribute) DisplayValueFloat() (f float64, ok bool) {
 }
 
 func (na *nodeAttribute) DisplayValueInt() (i int64, ok bool) {
-	i, ok = na.DisplayValue.(int64)
-	return
+	return na.int64(na.DisplayValue)
 }
 
 func (na *nodeAttribute) DisplayValueUint() (i uint64, ok bool) {
-	i, ok = na.DisplayValue.(uint64)
-	return
+	return na.uint64(na.DisplayValue)
 }
 
 func (na *nodeAttribute) TargetValueString() (s string, ok bool) {
@@ -114,11 +177,9 @@ func (na *nodeAttribute) TargetValueFloat() (f float64, ok bool) {
 }
 
 func (na *nodeAttribute) TargetValueInt() (i int64, ok bool) {
-	i, ok = na.TargetValue.(int64)
-	return
+	return na.int64(na.TargetValue)
 }
 
 func (na *nodeAttribute) TargetValueUint() (i uint64, ok bool) {
-	i, ok = na.TargetValue.(uint64)
-	return
+	return na.uint64(na.TargetValue)
 }
