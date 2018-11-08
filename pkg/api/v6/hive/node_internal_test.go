@@ -5,6 +5,42 @@ import (
 	"testing"
 )
 
+func Test_NodeType(t *testing.T) {
+	tests := []struct {
+		name    string
+		value   interface{}
+		want    string
+		wantErr bool
+	}{
+		{"Valid", "weeee", "weeee", false},
+		{"Invalid", 90000, "", true},
+		{"Missing", nil, "", true},
+	}
+
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			n := &node{Attributes: make(map[string]*nodeAttribute)}
+
+			if tt.value != nil {
+				n.Attributes["nodeType"] = &nodeAttribute{
+					ReportedValue: tt.value,
+				}
+			}
+
+			got, err := n.NodeType()
+			if (err != nil) != tt.wantErr {
+				t.Errorf("n.NodeType() error = %v, wantErr %v", err, tt.wantErr)
+				return
+			}
+
+			if !reflect.DeepEqual(got, tt.want) {
+				t.Errorf("n.NodeType() = %v, want %v", got, tt.want)
+			}
+		})
+	}
+
+}
+
 func Test_nodeAttribute(t *testing.T) {
 	tests := []struct {
 		name   string
