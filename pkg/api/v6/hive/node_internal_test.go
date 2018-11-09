@@ -19,7 +19,7 @@ func Test_NodeType(t *testing.T) {
 
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			n := &node{Attributes: make(map[string]*nodeAttribute)}
+			n := &node{Attributes: make(nodeAttributes)}
 
 			if tt.value != nil {
 				n.Attributes["nodeType"] = &nodeAttribute{

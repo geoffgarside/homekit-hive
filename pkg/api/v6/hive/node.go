@@ -6,18 +6,20 @@ import (
 )
 
 type node struct {
-	ID            string                    `json:"id,omitempty"`
-	Href          string                    `json:"href,omitempty"`
-	Name          string                    `json:"name,omitempty"`
-	ParentNodeID  string                    `json:"parentNodeId,omitempty"`
-	LastSeen      int64                     `json:"lastSeen,omitempty"`
-	CreatedOn     int64                     `json:"createdOn,omitempty"`
-	UserID        string                    `json:"userId,omitempty"`
-	OwnerID       string                    `json:"ownerId,omitempty"`
-	HomeID        string                    `json:"homeId,omitempty"`
-	Attributes    map[string]*nodeAttribute `json:"attributes,omitempty"`
-	Relationships json.RawMessage           `json:"relationships,omitempty"`
+	ID            string          `json:"id,omitempty"`
+	Href          string          `json:"href,omitempty"`
+	Name          string          `json:"name,omitempty"`
+	ParentNodeID  string          `json:"parentNodeId,omitempty"`
+	LastSeen      int64           `json:"lastSeen,omitempty"`
+	CreatedOn     int64           `json:"createdOn,omitempty"`
+	UserID        string          `json:"userId,omitempty"`
+	OwnerID       string          `json:"ownerId,omitempty"`
+	HomeID        string          `json:"homeId,omitempty"`
+	Attributes    nodeAttributes  `json:"attributes,omitempty"`
+	Relationships json.RawMessage `json:"relationships,omitempty"`
 }
+
+type nodeAttributes map[string]*nodeAttribute
 
 func (n *node) NodeType() (string, error) {
 	if attr, ok := n.Attributes["nodeType"]; ok {
