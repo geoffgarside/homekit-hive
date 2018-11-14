@@ -110,44 +110,44 @@ func TestHome_nodes(t *testing.T) {
 			UserID:       "e50c9b24-b45c-4cc6-b209-a32fb267ef9f",
 			OwnerID:      "ae14ac91-9264-4bec-aa37-435d2773670e",
 			HomeID:       "2f259ff3-108e-4bb8-b52b-d31c5a302d01",
-			Attributes: map[string]*nodeAttribute{
-				"nativeIdentifier": &nodeAttribute{
+			Attributes: nodeAttributes{
+				"nativeIdentifier": {
 					ReportedValue:      "73S7",
 					DisplayValue:       "73S7",
 					ReportReceivedTime: 1541629836583,
 					ReportChangedTime:  1528575087449,
 				},
-				"nodeType": &nodeAttribute{
+				"nodeType": {
 					ReportedValue:      "http://alertme.com/schema/json/node.class.thermostat.json#",
 					DisplayValue:       "http://alertme.com/schema/json/node.class.thermostat.json#",
 					ReportReceivedTime: 1541630012412,
 					ReportChangedTime:  1528575086933,
 				},
-				"powerSupply": &nodeAttribute{
+				"powerSupply": {
 					ReportedValue:      "AC",
 					DisplayValue:       "AC",
 					ReportReceivedTime: 1541629836583,
 					ReportChangedTime:  1528575087449,
 				},
-				"manufacturer": &nodeAttribute{
+				"manufacturer": {
 					ReportedValue:      "Computime",
 					DisplayValue:       "Computime",
 					ReportReceivedTime: 1541629836583,
 					ReportChangedTime:  1528575087449,
 				},
-				"protocol": &nodeAttribute{
+				"protocol": {
 					ReportedValue:      "ZIGBEE",
 					DisplayValue:       "ZIGBEE",
 					ReportReceivedTime: 1540730976582,
 					ReportChangedTime:  1529504932051,
 				},
-				"zoneName": &nodeAttribute{
+				"zoneName": {
 					ReportedValue:      "Hive Home",
 					DisplayValue:       "Hive Home",
 					ReportReceivedTime: 1541629836583,
 					ReportChangedTime:  1528575087449,
 				},
-				"presence": &nodeAttribute{
+				"presence": {
 					ReportedValue:      "PRESENT",
 					DisplayValue:       "PRESENT",
 					ReportReceivedTime: 1541629836583,
