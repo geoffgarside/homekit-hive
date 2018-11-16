@@ -24,6 +24,7 @@ type Thermostat struct {
 
 	ID   string
 	Name string
+	Href string
 }
 
 func (t *Thermostat) attr(key string) *nodeAttribute {
@@ -135,9 +136,10 @@ func (home *Home) Thermostats() ([]*Thermostat, error) {
 
 		n := n
 		thermostats = append(thermostats, &Thermostat{
-			node: n,
 			ID:   n.ID,
 			Name: n.Name,
+			Href: n.Href,
+			node: n,
 		})
 	}
 

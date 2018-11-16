@@ -365,6 +365,7 @@ func TestHome_Thermostats(t *testing.T) {
 		{"Fetch", []*Thermostat{{
 			ID:   "fe49e95e-c8cc-47cc-b38f-ec0c06361e13",
 			Name: "Receiver 1",
+			Href: "https://api-prod.bgchprod.info/omnia/nodes/fe49e95e-c8cc-47cc-b38f-ec0c06361e13",
 			node: &node{
 				ID:           "fe49e95e-c8cc-47cc-b38f-ec0c06361e13",
 				Href:         "https://api-prod.bgchprod.info/omnia/nodes/fe49e95e-c8cc-47cc-b38f-ec0c06361e13",
