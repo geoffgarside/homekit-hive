@@ -20,6 +20,7 @@ const (
 
 // Thermostat is a Hive managed Thermostat
 type Thermostat struct {
+	home *Home
 	node *node
 
 	ID   string
@@ -120,6 +121,21 @@ func (t *Thermostat) Maximum() float64 {
 	return v
 }
 
+// Update fetches the latest information about the Thermostat from the API
+func (t *Thermostat) Update() error {
+	n, err := t.home.node(t.Href)
+	if err != nil {
+		return &Error{Op: "thermostat: update", Err: err}
+	}
+
+	if n.ID != t.ID {
+		return &Error{Op: "thermostat: update", Code: ErrInvalidUpdate, Message: "update failed, ID mismatch"}
+	}
+
+	t.node = n
+	return nil
+}
+
 // Thermostats returns the list of thermostats in the Home
 func (home *Home) Thermostats() ([]*Thermostat, error) {
 	nodes, err := home.nodes()
@@ -139,6 +155,7 @@ func (home *Home) Thermostats() ([]*Thermostat, error) {
 			ID:   n.ID,
 			Name: n.Name,
 			Href: n.Href,
+			home: home,
 			node: n,
 		})
 	}

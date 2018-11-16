@@ -13,6 +13,8 @@ const (
 	ErrInvalidNodeType     = "INVALID_NODE_TYPE"
 	ErrInvalidNodeJSON     = "INVALID_NODE_JSON"
 	ErrInvalidDataType     = "INVALID_DATA_TYPE"
+	ErrNodeNotFound        = "NODE_NOT_FOUND"
+	ErrInvalidUpdate       = "INVALID_UPDATE"
 )
 
 // Error codes from Hive API
