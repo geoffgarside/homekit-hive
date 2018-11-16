@@ -455,7 +455,12 @@ func TestThermostat_Update(t *testing.T) {
 			return
 		}
 
-		if r.URL.Path != "/omnia/nodes/fe49e95e-c8cc-47cc-b38f-ec0c06361e13" {
+		switch r.URL.Path {
+		case "/omnia/nodes/fe49e95e-c8cc-47cc-b38f-ec0c06361e13":
+			break
+		case "/omnia/nodes/fe49e95e-c8cc-47cc-b38f-ec0c06361e18":
+			break
+		default:
 			http.Error(w, "unknown path", http.StatusNotFound)
 			return
 		}
@@ -554,6 +559,12 @@ func TestThermostat_Update(t *testing.T) {
 			Href: "https://api-prod.bgchprod.info/omnia/nodes/fe49e95e-c8cc-47cc-b38f-ec0c06361e13",
 			home: home,
 		}, false},
+		{"UpdateNotFound", &Thermostat{
+			ID:   "fe49e95e-c8cc-47cc-b38f-ec0c06361e18",
+			Name: "Receiver 1",
+			Href: "https://api-prod.bgchprod.info/omnia/nodes/fe49e95e-c8cc-47cc-b38f-ec0c06361e16",
+			home: home,
+		}, true},
 		{"UpdateMismatch", &Thermostat{
 			ID:   "fe49e95e-c8cc-47cc-b38f-ec0c06361e18",
 			Name: "Receiver 1",
