@@ -1,11 +1,13 @@
 package hive
 
 import (
+	"encoding/json"
 	"fmt"
 	"net/http"
 	"net/http/httptest"
 	"net/url"
 	"reflect"
+	"strconv"
 	"testing"
 
 	"github.com/go-test/deep"
@@ -584,3 +586,142 @@ func TestThermostat_Update(t *testing.T) {
 	}
 }
 
+func TestThermostat_SetTarget(t *testing.T) {
+	srv := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		if r.Method != http.MethodPut {
+			http.Error(w, "must be put", http.StatusBadRequest)
+			return
+		}
+
+		switch r.URL.Path {
+		case "/omnia/nodes/fe49e95e-c8cc-47cc-b38f-ec0c06361e13":
+			break
+		case "/omnia/nodes/fe49e95e-c8cc-47cc-b38f-ec0c06361e18":
+			break
+		default:
+			http.Error(w, "unknown path", http.StatusNotFound)
+			return
+		}
+
+		w.Header().Set("Content-Type", "application/vnd.alertme.zoo-6.1+json;charset=UTF-8")
+
+		var req nodesResponse
+		if err := json.NewDecoder(r.Body).Decode(&req); err != nil {
+			w.WriteHeader(http.StatusBadRequest)
+			w.Write([]byte(`{"error": {"reason": "Could not read json"}}`))
+			return
+		}
+
+		temp, ok := req.Nodes[0].Attributes["targetHeatTemperature"].TargetValueFloat()
+		if !ok {
+			w.WriteHeader(http.StatusBadRequest)
+			w.Write([]byte(`{"errors": [{"code": "INVALID_PARAMETER","title": "Node configuration error", "links": []}]}`))
+			return
+		}
+
+		w.WriteHeader(http.StatusOK)
+		fmt.Fprint(w, `{
+			"meta": {},
+			"links": {},
+			"linked": {},
+			"nodes": [{
+				"id": "fe49e95e-c8cc-47cc-b38f-ec0c06361e13",
+				"href": "https://api-prod.bgchprod.info/omnia/nodes/fe49e95e-c8cc-47cc-b38f-ec0c06361e13",
+				"name": "Receiver 1",
+				"parentNodeId": "1e32b7bd-64c1-46d8-812c-d4b339e8ac75",
+				"lastSeen": 1530553614549,
+				"createdOn": 1503399128592,
+				"userId": "e50c9b24-b45c-4cc6-b209-a32fb267ef9f",
+				"ownerId": "e50c9b24-b45c-4cc6-b209-a32fb267ef9f",
+				"homeId": "2f259ff3-108e-4bb8-b52b-d31c5a302d01",
+    			"attributes": {
+					"activeHeatCoolMode": {
+						"reportedValue": "HEAT",
+						"displayValue": "HEAT",
+						"reportReceivedTime": 1541629836583,
+						"reportChangedTime": 1528575087449
+					},
+					"targetHeatTemperature": {
+						"reportedValue": 15.5,
+						"targetValue": `+strconv.FormatFloat(temp, 'f', 2, 64)+`,
+						"displayValue": 15.5,
+						"reportReceivedTime": 1541629836583,
+						"reportChangedTime": 1541624410903,
+						"targetSetTime": 1541607371663,
+						"targetExpiryTime": 1541607671663,
+						"targetSetTXId": "mrp-237d20dd-981e-49fa-b6f1-7496a361243c",
+						"propertyStatus": "COMPLETE"
+					},
+					"minHeatTemperature": {
+						"reportedValue": 5.0,
+						"displayValue": 5.0,
+						"reportReceivedTime": 1541629836583,
+						"reportChangedTime": 1528575087449
+					},
+					"temperature": {
+						"reportedValue": 17.67,
+						"displayValue": 17.67,
+						"reportReceivedTime": 1541630239844,
+						"reportChangedTime": 1541630239844
+					},
+					"maxHeatTemperature": {
+						"reportedValue": 32.0,
+						"displayValue": 32.0,
+						"reportReceivedTime": 1541629836583,
+						"reportChangedTime": 1528575087449
+					},
+					"nodeType": {
+						"reportedValue": "http://alertme.com/schema/json/node.class.thermostat.json#",
+						"displayValue": "http://alertme.com/schema/json/node.class.thermostat.json#",
+						"reportReceivedTime": 1541630239844,
+						"reportChangedTime": 1528575087449
+					},
+					"supportsHotWater": {
+						"reportedValue": false,
+						"displayValue": false,
+						"reportReceivedTime": 1541629836583,
+						"reportChangedTime": 1528575087449
+					},
+					"frostProtectTemperature": {
+						"reportedValue": 7.0,
+						"displayValue": 7.0,
+						"reportReceivedTime": 1541629836583,
+						"reportChangedTime": 1528575087449
+					}
+				}
+			}]
+		}`)
+	}))
+
+	defer srv.Close()
+
+	baseURL, _ := url.Parse(srv.URL)
+	home := &Home{
+		baseURL:    baseURL,
+		httpClient: srv.Client(),
+	}
+
+	tests := []struct {
+		name       string
+		target     float64
+		thermostat *Thermostat
+		wantErr    bool
+	}{
+		{"Valid", 17.5, &Thermostat{
+			ID:   "fe49e95e-c8cc-47cc-b38f-ec0c06361e13",
+			Name: "Receiver 1",
+			Href: "https://api-prod.bgchprod.info/omnia/nodes/fe49e95e-c8cc-47cc-b38f-ec0c06361e13",
+			home: home,
+		}, false},
+	}
+
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			err := tt.thermostat.SetTarget(tt.target)
+			if (err != nil) != tt.wantErr {
+				t.Errorf("Thermostat.SetTarget() error = %v, wantErr %v", err, tt.wantErr)
+				return
+			}
+		})
+	}
+}
