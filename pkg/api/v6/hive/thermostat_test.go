@@ -6,48 +6,11 @@ import (
 	"net/http"
 	"net/http/httptest"
 	"net/url"
-	"reflect"
 	"strconv"
 	"testing"
 
 	"github.com/go-test/deep"
 )
-
-func TestThermostat_attr(t *testing.T) {
-	type fields struct {
-		key   string
-		value interface{}
-	}
-	type args struct {
-		key string
-	}
-	tests := []struct {
-		name   string
-		fields fields
-		args   args
-		want   *nodeAttribute
-	}{
-		{"Present", fields{"example", "val"}, args{"example"}, &nodeAttribute{ReportedValue: "val"}},
-		{"Missing", fields{"example", "val"}, args{"another"}, &nodeAttribute{}},
-	}
-	for _, tt := range tests {
-		t.Run(tt.name, func(t *testing.T) {
-			ts := &Thermostat{
-				node: &node{
-					Attributes: nodeAttributes{
-						tt.fields.key: &nodeAttribute{
-							ReportedValue: tt.fields.value,
-						},
-					},
-				},
-			}
-
-			if got := ts.node.attr(tt.args.key); !reflect.DeepEqual(got, tt.want) {
-				t.Errorf("Thermostat.attr() = %v, want %v", got, tt.want)
-			}
-		})
-	}
-}
 
 func TestThermostat_ActiveMode(t *testing.T) {
 	tests := []struct {
