@@ -9,7 +9,6 @@ import (
 
 	"github.com/brutella/hc"
 	"github.com/brutella/hc/accessory"
-	"github.com/brutella/hc/characteristic"
 	hclog "github.com/brutella/hc/log"
 
 	"github.com/sirupsen/logrus"
@@ -44,15 +43,8 @@ func main() {
 	}
 
 	hiveThermostat := nodes[0]
-	currentTemp, err := hiveThermostat.Temperature()
-	if err != nil {
-		logger.Fatal(err)
-	}
 
-	targetTemp := currentTemp
 
-	min := hiveThermostat.Minimum()
-	max := hiveThermostat.Maximum()
 
 	info := accessory.Info{
 		Name:         "Hive Thermostat",
@@ -61,60 +53,17 @@ func main() {
 		Model:        "SLR1",
 	}
 
-	// TODO: Add BatteryService
-	// TODO: Do we need a Bridge?
-
-	acc := accessory.NewThermostat(info, currentTemp, min, max, 0.5)
-	acc.Thermostat.TargetTemperature.OnValueRemoteUpdate(func(newTemp float64) {
-		if err := hiveThermostat.SetTarget(newTemp); err != nil {
-			logger.Errorf("failed to update temperature to %v: %v", newTemp, err)
-		}
-	})
-
-	acc.Thermostat.TargetTemperature.OnValueRemoteGet(func() float64 {
-		temp, err := hiveThermostat.Target()
-		if err != nil {
-			logger.Errorf("failed to retrieve temperature from API: %v", err)
-			return targetTemp
-		}
-
-		targetTemp = temp
-		return temp
-	})
-
-	acc.Thermostat.TargetHeatingCoolingState.OnValueRemoteGet(func() int {
-		mode, err := hiveThermostat.ActiveMode()
-		if err != nil {
-			logger.Errorf("failed to retrieve active mode from API: %v", err)
-		}
-
-		switch mode {
-		case hive.ActiveModeHeating:
-			return characteristic.CurrentHeatingCoolingStateHeat
-		case hive.ActiveModeCooling:
-			return characteristic.CurrentHeatingCoolingStateCool
-		default:
-			return characteristic.CurrentHeatingCoolingStateOff
-		}
-	})
-
-	acc.Thermostat.CurrentTemperature.OnValueRemoteGet(func() float64 {
-		temp, err := hiveThermostat.Temperature()
-		if err != nil {
-			logger.Errorf("failed to retrieve temperature from API: %v", err)
-			return currentTemp
-		}
-
-		currentTemp = temp
-		return temp
-	})
-
-	// batteryService := service.NewBatteryService()
-	// batteryService.BatteryLevel.
-	// 	acc.AddService(batteryService)
+	thermostat, err := newThermostat(hiveThermostat, logger)
+	if err != nil {
+		logger.Fatal(err)
+	}
 
 	ctx, cancel := context.WithCancel(context.Background())
 	defer cancel()
+
+	acc := newAccessory(info, thermostat)
+	logger.Infof("Thermostat created %v: current temp %v, min %v, max %v, step %v",
+		hiveThermostat.ID, thermostat.cur, thermostat.min, thermostat.max, thermostat.step)
 
 	go func() {
 		tick := time.NewTicker(1 * time.Minute)
@@ -122,20 +71,20 @@ func main() {
 		for {
 			select {
 			case <-tick.C:
-				if err := hiveThermostat.Update(); err != nil {
+				if err := thermostat.update(); err != nil {
 					logger.Errorf("failed to update thermostat: %v", err)
 					continue
 				}
 
-				// Update acc.Thermostat properties?
+				acc.Thermostat.TargetTemperature.SetValue(thermostat.getTarget())
+				acc.Thermostat.CurrentTemperature.SetValue(thermostat.getTemp())
+				acc.Thermostat.CurrentHeatingCoolingState.SetValue(thermostat.getMode())
 			case <-ctx.Done():
 				tick.Stop()
 				return
 			}
 		}
 	}()
-
-	logger.Infof("Thermostat created %v: current temp %v, min %v, max %v, step %v", hiveThermostat.ID, currentTemp, min, max, 0.5)
 
 	transport, err := hc.NewIPTransport(
 		hc.Config{Pin: homekitPIN},
@@ -158,4 +107,16 @@ func main() {
 	fmt.Printf("      ┌────────────┐\n")
 	fmt.Printf("      | %08s |\n", homekitPIN)
 	fmt.Printf("      └────────────┘\n")
+}
+
+func newAccessory(info accessory.Info, t *thermostat) *accessory.Thermostat {
+	acc := accessory.NewThermostat(info, t.cur, t.min, t.max, t.step)
+
+	acc.Thermostat.TargetTemperature.OnValueRemoteUpdate(t.setTarget)
+	acc.Thermostat.TargetTemperature.OnValueRemoteGet(t.getTarget)
+	acc.Thermostat.CurrentTemperature.OnValueRemoteGet(t.getTemp)
+
+	acc.Thermostat.TargetHeatingCoolingState.OnValueRemoteGet(t.getMode)
+
+	return acc
 }
