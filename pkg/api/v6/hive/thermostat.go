@@ -35,17 +35,9 @@ type Thermostat struct {
 	Href string
 }
 
-func (t *Thermostat) attr(key string) *nodeAttribute {
-	a, ok := t.node.Attributes[key]
-	if !ok {
-		a = &nodeAttribute{}
-	}
-	return a
-}
-
 // ActiveMode returns the current active heating/cooling mode
 func (t *Thermostat) ActiveMode() (ActiveMode, error) {
-	v, ok := t.attr("activeHeatCoolMode").ReportedValueString()
+	v, ok := t.node.attr("activeHeatCoolMode").ReportedValueString()
 	if !ok {
 		return ActiveModeOff, &Error{
 			Op:      "thermostat: temperature",
@@ -66,7 +58,7 @@ func (t *Thermostat) ActiveMode() (ActiveMode, error) {
 
 // Temperature returns the current measured temperature
 func (t *Thermostat) Temperature() (float64, error) {
-	v, ok := t.attr("temperature").ReportedValueFloat()
+	v, ok := t.node.attr("temperature").ReportedValueFloat()
 	if !ok {
 		return t.Minimum(), &Error{
 			Op:      "thermostat: temperature",
@@ -88,7 +80,7 @@ func (t *Thermostat) Temperature() (float64, error) {
 
 // Target returns the temperature setting
 func (t *Thermostat) Target() (float64, error) {
-	v, ok := t.attr("targetHeatTemperature").TargetValueFloat()
+	v, ok := t.node.attr("targetHeatTemperature").TargetValueFloat()
 	if !ok {
 		return t.Minimum(), &Error{
 			Op:      "thermostat: target temperature",
@@ -110,7 +102,7 @@ func (t *Thermostat) Target() (float64, error) {
 
 // Minimum returns the minimum valid temperature
 func (t *Thermostat) Minimum() float64 {
-	v, ok := t.attr("minHeatTemperature").ReportedValueFloat()
+	v, ok := t.node.attr("minHeatTemperature").ReportedValueFloat()
 	if !ok {
 		return ThermostatDefaultMinimum
 	}
@@ -120,7 +112,7 @@ func (t *Thermostat) Minimum() float64 {
 
 // Maximum returns the maximum valid temperature
 func (t *Thermostat) Maximum() float64 {
-	v, ok := t.attr("maxHeatTemperature").ReportedValueFloat()
+	v, ok := t.node.attr("maxHeatTemperature").ReportedValueFloat()
 	if !ok {
 		return ThermostatDefaultMaximum
 	}
@@ -153,7 +145,7 @@ func (home *Home) Thermostats() ([]*Thermostat, error) {
 	var thermostats []*Thermostat
 
 	for _, n := range nodes {
-		if _, ok := n.Attributes["targetHeatTemperature"]; !ok {
+		if _, ok := n.Attributes["temperature"]; !ok {
 			continue
 		}
 

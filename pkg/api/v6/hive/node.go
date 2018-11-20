@@ -42,6 +42,14 @@ func (n *node) NodeType() (string, error) {
 	}
 }
 
+func (n *node) attr(key string) *nodeAttribute {
+	a, ok := n.Attributes[key]
+	if !ok {
+		a = &nodeAttribute{}
+	}
+	return a
+}
+
 type nodeAttribute struct {
 	ReportedValue      interface{} `json:"reportedValue,omitempty"`
 	DisplayValue       interface{} `json:"displayValue,omitempty"`

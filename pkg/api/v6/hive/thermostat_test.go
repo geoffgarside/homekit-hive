@@ -42,7 +42,7 @@ func TestThermostat_attr(t *testing.T) {
 				},
 			}
 
-			if got := ts.attr(tt.args.key); !reflect.DeepEqual(got, tt.want) {
+			if got := ts.node.attr(tt.args.key); !reflect.DeepEqual(got, tt.want) {
 				t.Errorf("Thermostat.attr() = %v, want %v", got, tt.want)
 			}
 		})
