@@ -55,14 +55,19 @@ func main() {
 		logger.Fatal(err)
 	}
 
-	nodes, err := c.Thermostats()
+	thermostats, err := c.Thermostats()
 	if err != nil {
 		logger.Fatal(err)
 	}
 
-	hiveThermostat := nodes[0]
+	hiveThermostat := thermostats[0]
 
+	controllers, err := c.Controllers()
+	if err != nil {
+		logger.Fatal(err)
+	}
 
+	hiveController := controllers[0]
 
 	info := accessory.Info{
 		Name:         "Hive Thermostat",
@@ -71,7 +76,7 @@ func main() {
 		Model:        "SLR1",
 	}
 
-	thermostat, err := newThermostat(hiveThermostat, logger)
+	thermostat, err := newThermostat(hiveThermostat, hiveController, logger)
 	if err != nil {
 		logger.Fatal(err)
 	}

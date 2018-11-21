@@ -11,29 +11,38 @@ import (
 
 type thermostat struct {
 	hive   *hive.Thermostat
+	ui     *hive.Controller
 	logger *logrus.Logger
 
 	min  float64
 	max  float64
 	step float64
 
-	mu  sync.Mutex
-	cur float64
+	mu      sync.Mutex
+	cur     float64
+	battery int
 }
 
-func newThermostat(t *hive.Thermostat, logger *logrus.Logger) (*thermostat, error) {
+func newThermostat(t *hive.Thermostat, c *hive.Controller, logger *logrus.Logger) (*thermostat, error) {
 	cur, err := t.Temperature()
 	if err != nil {
 		return nil, err
 	}
 
+	batt, err := c.BatteryLevel()
+	if err != nil {
+		return nil, err
+	}
+
 	return &thermostat{
-		hive:   t,
-		logger: logger,
-		cur:    cur,
-		min:    t.Minimum(),
-		max:    t.Maximum(),
-		step:   0.5,
+		hive:    t,
+		ui:      c,
+		logger:  logger,
+		cur:     cur,
+		min:     t.Minimum(),
+		max:     t.Maximum(),
+		step:    0.5,
+		battery: batt,
 	}, nil
 }
 
@@ -101,4 +110,21 @@ func (t *thermostat) getMode() int {
 	default:
 		return characteristic.CurrentHeatingCoolingStateOff
 	}
+}
+
+func (t *thermostat) getBatteryLevel() int {
+	batt, err := t.ui.BatteryLevel()
+
+	if err != nil {
+		t.logger.Errorf("failed to retrieve battery level from API: %v", err)
+		t.mu.Lock()
+		batt = t.battery
+		t.mu.Unlock()
+	} else {
+		t.mu.Lock()
+		t.battery = batt
+		t.mu.Unlock()
+	}
+
+	return batt
 }
