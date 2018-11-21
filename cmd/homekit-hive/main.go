@@ -13,6 +13,7 @@ import (
 	"github.com/brutella/hc"
 	"github.com/brutella/hc/accessory"
 	hclog "github.com/brutella/hc/log"
+	"github.com/brutella/hc/service"
 
 	"github.com/sirupsen/logrus"
 
@@ -140,6 +141,12 @@ func newAccessory(info accessory.Info, t *thermostat) *accessory.Thermostat {
 	acc.Thermostat.CurrentTemperature.OnValueRemoteGet(t.getTemp)
 
 	acc.Thermostat.TargetHeatingCoolingState.OnValueRemoteGet(t.getMode)
+
+	battery := service.NewBatteryService()
+	battery.BatteryLevel.SetMinValue(0)
+	battery.BatteryLevel.SetMaxValue(100)
+	battery.BatteryLevel.OnValueRemoteGet(t.getBatteryLevel)
+	acc.AddService(battery.Service)
 
 	return acc
 }
