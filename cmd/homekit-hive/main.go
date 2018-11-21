@@ -18,6 +18,7 @@ import (
 	"github.com/sirupsen/logrus"
 
 	"github.com/geoffgarside/homekit-hive/pkg/api/v6/hive"
+	"github.com/geoffgarside/homekit-hive/pkg/httpkit"
 )
 
 func main() {
@@ -38,7 +39,7 @@ func main() {
 
 	userAgent := fmt.Sprintf("homekit-hive/1.0.0 (%v; %v/%v)", runtime.Version(), runtime.GOOS, runtime.GOARCH)
 	httpClient := &http.Client{
-		Transport: setUserAgent(userAgent, &http.Transport{
+		Transport: httpkit.UserAgentTransport(userAgent, &http.Transport{
 			Dial: (&net.Dialer{
 				Timeout:   30 * time.Second,
 				KeepAlive: 30 * time.Second,
