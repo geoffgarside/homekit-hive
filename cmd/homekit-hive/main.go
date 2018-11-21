@@ -4,7 +4,10 @@ import (
 	"context"
 	"flag"
 	"fmt"
+	"net"
+	"net/http"
 	"os"
+	"runtime"
 	"time"
 
 	"github.com/brutella/hc"
@@ -32,7 +35,22 @@ func main() {
 	hclog.Info.SetOutput(logger.WriterLevel(logrus.InfoLevel))
 	hclog.Debug.SetOutput(logger.WriterLevel(logrus.DebugLevel))
 
-	c, err := hive.Connect(hive.WithCredentials(username, password))
+	userAgent := fmt.Sprintf("homekit-hive/1.0.0 (%v; %v/%v)", runtime.Version(), runtime.GOOS, runtime.GOARCH)
+	httpClient := &http.Client{
+		Transport: setUserAgent(userAgent, &http.Transport{
+			Dial: (&net.Dialer{
+				Timeout:   30 * time.Second,
+				KeepAlive: 30 * time.Second,
+			}).Dial,
+			TLSHandshakeTimeout:   10 * time.Second,
+			ResponseHeaderTimeout: 10 * time.Second,
+		}),
+	}
+
+	c, err := hive.Connect(
+		hive.WithCredentials(username, password),
+		hive.WithHTTPClient(httpClient),
+	)
 	if err != nil {
 		logger.Fatal(err)
 	}
