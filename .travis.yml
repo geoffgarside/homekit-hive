@@ -6,10 +6,15 @@ env:
 go:
 - 1.10.x
 - 1.11.x
-before_script:
-- curl -L https://codeclimate.com/downloads/test-reporter/test-reporter-latest-linux-amd64 > ./cc-test-reporter
-- chmod +x ./cc-test-reporter
-- "./cc-test-reporter before-build"
-script: go test -v -race -cover ./... -coverpkg ./... -coverprofile=c.out
-after_script:
-- "./cc-test-reporter after-build --exit-code $TRAVIS_TEST_RESULT"
+jobs:
+  include:
+  - go: 1.10.x
+    script: go test -v -race
+  - go: 1.11.x
+    before_script:
+    - curl -L https://codeclimate.com/downloads/test-reporter/test-reporter-latest-linux-amd64 > ./cc-test-reporter
+    - chmod +x ./cc-test-reporter
+    - "./cc-test-reporter before-build"
+    script: go test -v -race -cover ./... -coverpkg ./... -coverprofile=c.out
+    after_script:
+    - "./cc-test-reporter after-build --exit-code $TRAVIS_TEST_RESULT"
