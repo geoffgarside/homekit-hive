@@ -51,11 +51,7 @@ func (t *thermostat) update() error {
 		return err
 	}
 
-	if err := t.ui.Update(); err != nil {
-		return err
-	}
-
-	return nil
+	return t.ui.Update()
 }
 
 func (t *thermostat) setTarget(newTemp float64) {
