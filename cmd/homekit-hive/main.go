@@ -45,19 +45,10 @@ func main() {
 		logger.Fatal(err)
 	}
 
-	thermostats, err := c.Thermostats()
+	hiveThermostat, hiveController, err := hiveComponents(c)
 	if err != nil {
 		logger.Fatal(err)
 	}
-
-	hiveThermostat := thermostats[0]
-
-	controllers, err := c.Controllers()
-	if err != nil {
-		logger.Fatal(err)
-	}
-
-	hiveController := controllers[0]
 
 	info := accessory.Info{
 		Name:         "Hive Thermostat",
@@ -154,3 +145,16 @@ func httpClient() *http.Client {
 	}
 }
 
+func hiveComponents(home *hive.Home) (*hive.Thermostat, *hive.Controller, error) {
+	thermostats, err := home.Thermostats()
+	if err != nil {
+		return nil, nil, err
+	}
+
+	controllers, err := home.Controllers()
+	if err != nil {
+		return nil, nil, err
+	}
+
+	return thermostats[0], controllers[0], nil
+}
