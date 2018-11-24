@@ -25,21 +25,12 @@ func (home *Home) login() error {
 	fmt.Fprintf(body, `{"sessions":[{"username":%q,"password":%q,"caller":"WEB"}]}`,
 		home.username, home.password)
 
-	req, err := home.newRequest(http.MethodPost, "/omnia/auth/sessions", body)
-	if err != nil {
-		return &Error{Op: "login: create request", Err: err}
-	}
-
-	resp, err := home.httpClient.Do(req)
+	resp, err := home.httpRequest(http.MethodPost, "/omnia/auth/sessions", body)
 	if err != nil {
 		return &Error{Op: "login: request", Err: err}
 	}
 
 	defer resp.Body.Close()
-
-	if err := home.checkResponse(resp); err != nil {
-		return &Error{Op: "login: response", Err: err}
-	}
 
 	var response loginResponse
 	if err := json.NewDecoder(resp.Body).Decode(&response); err != nil {
