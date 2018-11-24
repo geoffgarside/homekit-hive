@@ -78,7 +78,7 @@ func (t *Thermostat) Temperature() (float64, error) {
 	return v, nil
 }
 
-// Target returns the temperature setting
+// Target returns the target temperature setting
 func (t *Thermostat) Target() (float64, error) {
 	v, ok := t.node.attr("targetHeatTemperature").TargetValueFloat()
 	if !ok {
@@ -198,27 +198,15 @@ func (home *Home) setThermostat(t *Thermostat, targetTemp float64) (*node, error
 		}
 	}
 
-	req, err := home.newRequest(http.MethodPut, uri.RequestURI(), buf)
+	resp, err := home.httpRequest(http.MethodPut, uri.RequestURI(), buf)
 	if err != nil {
 		return nil, &Error{
-			Op:  "thermostat: set temperature: create request",
-			Err: err,
-		}
-	}
-
-	resp, err := home.httpClient.Do(req)
-	if err != nil {
-		return nil, &Error{
-			Op:  "thermostat: set temperature: response",
+			Op:  "thermostat: set temperature: request",
 			Err: err,
 		}
 	}
 
 	defer resp.Body.Close()
-
-	if err := home.checkResponse(resp); err != nil {
-		return nil, err
-	}
 
 	var response nodesResponse
 	if err := json.NewDecoder(resp.Body).Decode(&response); err != nil {
