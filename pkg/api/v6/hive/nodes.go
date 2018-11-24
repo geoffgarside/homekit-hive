@@ -11,21 +11,12 @@ type nodesResponse struct {
 }
 
 func (home *Home) nodes() ([]*node, error) {
-	req, err := home.newRequest(http.MethodGet, "/omnia/nodes", nil)
+	resp, err := home.httpRequest(http.MethodGet, "/omnia/nodes", nil)
 	if err != nil {
-		return nil, &Error{Op: "nodes: request", Err: err}
-	}
-
-	resp, err := home.httpClient.Do(req)
-	if err != nil {
-		return nil, &Error{Op: "nodes: response", Err: err}
+		return nil, &Error{Op: "node: response", Err: err}
 	}
 
 	defer resp.Body.Close()
-
-	if err := home.checkResponse(resp); err != nil {
-		return nil, err
-	}
 
 	var response nodesResponse
 	if err := json.NewDecoder(resp.Body).Decode(&response); err != nil {
@@ -41,21 +32,12 @@ func (home *Home) node(href string) (*node, error) {
 		return nil, &Error{Op: "node: request", Err: err}
 	}
 
-	req, err := home.newRequest(http.MethodGet, uri.RequestURI(), nil)
-	if err != nil {
-		return nil, &Error{Op: "node: request", Err: err}
-	}
-
-	resp, err := home.httpClient.Do(req)
+	resp, err := home.httpRequest(http.MethodGet, uri.RequestURI(), nil)
 	if err != nil {
 		return nil, &Error{Op: "node: response", Err: err}
 	}
 
 	defer resp.Body.Close()
-
-	if err := home.checkResponse(resp); err != nil {
-		return nil, err
-	}
 
 	var response nodesResponse
 	if err := json.NewDecoder(resp.Body).Decode(&response); err != nil {

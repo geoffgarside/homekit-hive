@@ -3,6 +3,7 @@ package hive
 import (
 	"encoding/json"
 	"io"
+	"io/ioutil"
 	"net/http"
 	"net/url"
 )
@@ -106,4 +107,24 @@ func (home *Home) checkResponse(resp *http.Response) error {
 
 	e := body.Errors[0]
 	return &Error{Code: e.Code, Message: e.Title}
+}
+
+func (home *Home) httpRequest(method, path string, body io.Reader) (*http.Response, error) {
+	req, err := home.newRequest(method, path, body)
+	if err != nil {
+		return nil, &Error{Op: "home: request", Err: err}
+	}
+
+	resp, err := home.httpClient.Do(req)
+	if err != nil {
+		return nil, &Error{Op: "home: response", Err: err}
+	}
+
+	if err := home.checkResponse(resp); err != nil {
+		io.Copy(ioutil.Discard, resp.Body)
+		resp.Body.Close()
+		return nil, err
+	}
+
+	return resp, nil
 }
