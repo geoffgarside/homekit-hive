@@ -45,21 +45,16 @@ func main() {
 		logger.Fatal(err)
 	}
 
-	hiveThermostat, hiveController, err := hiveComponents(c)
+	thermostat, err := newThermostat(c, logger)
 	if err != nil {
 		logger.Fatal(err)
 	}
 
 	info := accessory.Info{
 		Name:         "Hive Thermostat",
-		SerialNumber: hiveThermostat.ID,
+		SerialNumber: thermostat.ID(),
 		Manufacturer: "Hive",
 		Model:        "SLR1",
-	}
-
-	thermostat, err := newThermostat(hiveThermostat, hiveController, logger)
-	if err != nil {
-		logger.Fatal(err)
 	}
 
 	ctx, cancel := context.WithCancel(context.Background())
@@ -67,7 +62,7 @@ func main() {
 
 	acc := newAccessory(info, thermostat)
 	logger.Infof("Thermostat created %v: current temp %v, min %v, max %v, step %v",
-		hiveThermostat.ID, thermostat.cur, thermostat.min, thermostat.max, thermostat.step)
+		thermostat.ID(), thermostat.cur, thermostat.min, thermostat.max, thermostat.step)
 
 	go func() {
 		tick := time.NewTicker(1 * time.Minute)
@@ -143,18 +138,4 @@ func httpClient() *http.Client {
 			ResponseHeaderTimeout: 10 * time.Second,
 		}),
 	}
-}
-
-func hiveComponents(home *hive.Home) (*hive.Thermostat, *hive.Controller, error) {
-	thermostats, err := home.Thermostats()
-	if err != nil {
-		return nil, nil, err
-	}
-
-	controllers, err := home.Controllers()
-	if err != nil {
-		return nil, nil, err
-	}
-
-	return thermostats[0], controllers[0], nil
 }

@@ -23,7 +23,12 @@ type thermostat struct {
 	battery int
 }
 
-func newThermostat(t *hive.Thermostat, c *hive.Controller, logger *logrus.Logger) (*thermostat, error) {
+func newThermostat(home *hive.Home, logger *logrus.Logger) (*thermostat, error) {
+	t, c, err := hiveComponents(home)
+	if err != nil {
+		return nil, err
+	}
+
 	cur, err := t.Temperature()
 	if err != nil {
 		return nil, err
@@ -44,6 +49,24 @@ func newThermostat(t *hive.Thermostat, c *hive.Controller, logger *logrus.Logger
 		step:    0.5,
 		battery: batt,
 	}, nil
+}
+
+func hiveComponents(home *hive.Home) (*hive.Thermostat, *hive.Controller, error) {
+	thermostats, err := home.Thermostats()
+	if err != nil {
+		return nil, nil, err
+	}
+
+	controllers, err := home.Controllers()
+	if err != nil {
+		return nil, nil, err
+	}
+
+	return thermostats[0], controllers[0], nil
+}
+
+func (t *thermostat) ID() string {
+	return t.hive.ID
 }
 
 func (t *thermostat) update() error {
