@@ -37,21 +37,9 @@ func main() {
 	hclog.Info.SetOutput(logger.WriterLevel(logrus.InfoLevel))
 	hclog.Debug.SetOutput(logger.WriterLevel(logrus.DebugLevel))
 
-	userAgent := fmt.Sprintf("homekit-hive/1.0.0 (%v; %v/%v)", runtime.Version(), runtime.GOOS, runtime.GOARCH)
-	httpClient := &http.Client{
-		Transport: httpkit.UserAgentTransport(userAgent, &http.Transport{
-			Dial: (&net.Dialer{
-				Timeout:   30 * time.Second,
-				KeepAlive: 30 * time.Second,
-			}).Dial,
-			TLSHandshakeTimeout:   10 * time.Second,
-			ResponseHeaderTimeout: 10 * time.Second,
-		}),
-	}
-
 	c, err := hive.Connect(
 		hive.WithCredentials(username, password),
-		hive.WithHTTPClient(httpClient),
+		hive.WithHTTPClient(httpClient()),
 	)
 	if err != nil {
 		logger.Fatal(err)
@@ -151,3 +139,18 @@ func newAccessory(info accessory.Info, t *thermostat) *accessory.Thermostat {
 
 	return acc
 }
+
+func httpClient() *http.Client {
+	userAgent := fmt.Sprintf("homekit-hive/1.0.0 (%v; %v/%v)", runtime.Version(), runtime.GOOS, runtime.GOARCH)
+	return &http.Client{
+		Transport: httpkit.UserAgentTransport(userAgent, &http.Transport{
+			Dial: (&net.Dialer{
+				Timeout:   30 * time.Second,
+				KeepAlive: 30 * time.Second,
+			}).Dial,
+			TLSHandshakeTimeout:   10 * time.Second,
+			ResponseHeaderTimeout: 10 * time.Second,
+		}),
+	}
+}
+
