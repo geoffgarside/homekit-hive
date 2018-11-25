@@ -47,17 +47,16 @@ func main() {
 		logger.Fatal(err)
 	}
 
-	info := accessory.Info{
+	acc := newAccessory(accessory.Info{
 		Name:         "Hive Thermostat",
 		SerialNumber: thermostat.ID(),
 		Manufacturer: "Hive",
 		Model:        "SLR1",
-	}
+	}, thermostat)
 
 	ctx, cancel := context.WithCancel(context.Background())
 	defer cancel()
 
-	acc := newAccessory(info, thermostat)
 	logger.Infof("Thermostat created %v: current temp %v, min %v, max %v, step %v",
 		thermostat.ID(), thermostat.cur, thermostat.min, thermostat.max, thermostat.step)
 
