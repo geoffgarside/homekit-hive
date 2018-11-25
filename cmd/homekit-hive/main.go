@@ -60,26 +60,7 @@ func main() {
 	ctx, cancel := context.WithCancel(context.Background())
 	defer cancel()
 
-	go func() {
-		tick := time.NewTicker(1 * time.Minute)
-
-		for {
-			select {
-			case <-tick.C:
-				if err := thermostat.update(); err != nil {
-					logger.Errorf("failed to update thermostat: %v", err)
-					continue
-				}
-
-				acc.Thermostat.TargetTemperature.SetValue(thermostat.getTarget())
-				acc.Thermostat.CurrentTemperature.SetValue(thermostat.getTemp())
-				acc.Thermostat.CurrentHeatingCoolingState.SetValue(thermostat.getMode())
-			case <-ctx.Done():
-				tick.Stop()
-				return
-			}
-		}
-	}()
+	go pollForHiveUpdates(ctx, thermostat, acc, logger)
 
 	transport, err := hc.NewIPTransport(
 		hc.Config{Pin: homekitPIN},
@@ -146,4 +127,25 @@ func printPIN(pin string) {
 	fmt.Printf("      ┌────────────┐\n")
 	fmt.Printf("      | %08s |\n", pin)
 	fmt.Printf("      └────────────┘\n")
+}
+
+func pollForHiveUpdates(ctx context.Context, thermostat *thermostat, acc *accessory.Thermostat, logger *logrus.Logger) {
+	tick := time.NewTicker(1 * time.Minute)
+
+	for {
+		select {
+		case <-tick.C:
+			if err := thermostat.update(); err != nil {
+				logger.Errorf("failed to update thermostat: %v", err)
+				continue
+			}
+
+			acc.Thermostat.TargetTemperature.SetValue(thermostat.getTarget())
+			acc.Thermostat.CurrentTemperature.SetValue(thermostat.getTemp())
+			acc.Thermostat.CurrentHeatingCoolingState.SetValue(thermostat.getMode())
+		case <-ctx.Done():
+			tick.Stop()
+			return
+		}
+	}
 }
