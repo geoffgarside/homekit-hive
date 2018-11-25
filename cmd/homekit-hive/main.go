@@ -34,7 +34,7 @@ func main() {
 	flag.Parse()
 
 	logger := newLogger()
-	c, err := hive.Connect(
+	home, err := hive.Connect(
 		hive.WithCredentials(username, password),
 		hive.WithHTTPClient(httpClient()),
 	)
@@ -42,7 +42,7 @@ func main() {
 		logger.Fatal(err)
 	}
 
-	thermostat, err := newThermostat(c, logger)
+	thermostat, err := newThermostat(home, logger)
 	if err != nil {
 		logger.Fatal(err)
 	}
