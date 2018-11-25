@@ -33,10 +33,7 @@ func main() {
 	flag.StringVar(&homekitPIN, "pin", os.Getenv("HOMEKIT_PIN"), "homekit pin")
 	flag.Parse()
 
-	logger := logrus.StandardLogger()
-	hclog.Info.SetOutput(logger.WriterLevel(logrus.InfoLevel))
-	hclog.Debug.SetOutput(logger.WriterLevel(logrus.DebugLevel))
-
+	logger := newLogger()
 	c, err := hive.Connect(
 		hive.WithCredentials(username, password),
 		hive.WithHTTPClient(httpClient()),
@@ -138,4 +135,12 @@ func httpClient() *http.Client {
 			ResponseHeaderTimeout: 10 * time.Second,
 		}),
 	}
+}
+
+func newLogger() *logrus.Logger {
+	logger := logrus.StandardLogger()
+	hclog.Info.SetOutput(logger.WriterLevel(logrus.InfoLevel))
+	hclog.Debug.SetOutput(logger.WriterLevel(logrus.DebugLevel))
+
+	return logger
 }
