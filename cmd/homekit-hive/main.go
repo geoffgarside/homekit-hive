@@ -54,11 +54,11 @@ func main() {
 		Model:        "SLR1",
 	}, thermostat)
 
-	ctx, cancel := context.WithCancel(context.Background())
-	defer cancel()
-
 	logger.Infof("Thermostat created %v: current temp %v, min %v, max %v, step %v",
 		thermostat.ID(), thermostat.cur, thermostat.min, thermostat.max, thermostat.step)
+
+	ctx, cancel := context.WithCancel(context.Background())
+	defer cancel()
 
 	go func() {
 		tick := time.NewTicker(1 * time.Minute)
