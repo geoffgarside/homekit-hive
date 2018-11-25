@@ -99,9 +99,7 @@ func main() {
 	logger.Info("Starting transport")
 	transport.Start()
 
-	fmt.Printf("      ┌────────────┐\n")
-	fmt.Printf("      | %08s |\n", homekitPIN)
-	fmt.Printf("      └────────────┘\n")
+	printPIN(homekitPIN)
 }
 
 func newAccessory(info accessory.Info, t *thermostat) *accessory.Thermostat {
@@ -142,4 +140,10 @@ func newLogger() *logrus.Logger {
 	hclog.Debug.SetOutput(logger.WriterLevel(logrus.DebugLevel))
 
 	return logger
+}
+
+func printPIN(pin string) {
+	fmt.Printf("      ┌────────────┐\n")
+	fmt.Printf("      | %08s |\n", pin)
+	fmt.Printf("      └────────────┘\n")
 }
