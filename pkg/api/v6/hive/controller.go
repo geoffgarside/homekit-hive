@@ -13,7 +13,7 @@ type Controller struct {
 // BatteryLevel returns the percentage of battery currently registered
 // by the Controller.
 func (c *Controller) BatteryLevel() (int, error) {
-	l, ok := c.node.attr("batteryLevel").ReportedValueInt()
+	l, ok := c.node.attr("batteryLevel").ReportedValueFloat()
 	if !ok {
 		return 0, &Error{
 			Op:      "controller: battery level",
