@@ -117,6 +117,10 @@ func httpClient() *http.Client {
 
 func newLogger() *logrus.Logger {
 	logger := logrus.StandardLogger()
+	logger.SetFormatter(&logrus.TextFormatter{
+		FullTimestamp: true,
+	})
+
 	hclog.Info.SetOutput(logger.WriterLevel(logrus.InfoLevel))
 	hclog.Info.SetPrefix("")
 	hclog.Info.SetFlags(0)
