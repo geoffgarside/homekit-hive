@@ -23,17 +23,23 @@ import (
 
 func main() {
 	var (
-		username   string
-		password   string
-		homekitPIN string
+		username     string
+		password     string
+		homekitPIN   string
+		debugLogging bool
 	)
 
 	flag.StringVar(&username, "u", os.Getenv("HIVE_USERNAME"), "hive username")
 	flag.StringVar(&password, "p", os.Getenv("HIVE_PASSWORD"), "hive password")
 	flag.StringVar(&homekitPIN, "pin", os.Getenv("HOMEKIT_PIN"), "homekit pin")
+	flag.BoolVar(&debugLogging, "debug", false, "enable debug logging")
 	flag.Parse()
 
 	logger := newLogger()
+	if debugLogging {
+		logger.SetLevel(logrus.DebugLevel)
+	}
+
 	home, err := hive.Connect(
 		hive.WithCredentials(username, password),
 		hive.WithHTTPClient(httpClient()),
