@@ -17,7 +17,7 @@ func TestController_BatteryLevel(t *testing.T) {
 		want    int
 		wantErr bool
 	}{
-		{"Valid", 60, 60, false},
+		{"Valid", 60.0, 60, false},
 		{"Invalid", "str", 0, true},
 	}
 	for _, tt := range tests {
