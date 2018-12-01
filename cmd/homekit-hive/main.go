@@ -118,7 +118,12 @@ func httpClient() *http.Client {
 func newLogger() *logrus.Logger {
 	logger := logrus.StandardLogger()
 	hclog.Info.SetOutput(logger.WriterLevel(logrus.InfoLevel))
+	hclog.Info.SetPrefix("")
+	hclog.Info.SetFlags(0)
+
 	hclog.Debug.SetOutput(logger.WriterLevel(logrus.DebugLevel))
+	hclog.Debug.SetPrefix("")
+	hclog.Debug.SetFlags(0)
 
 	return logger
 }
