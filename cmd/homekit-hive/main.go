@@ -77,10 +77,10 @@ func main() {
 		logger.Infof("transport stopped")
 	})
 
+	printPIN(homekitPIN)
+
 	logger.Info("Starting transport")
 	transport.Start()
-
-	printPIN(homekitPIN)
 }
 
 func newAccessory(info accessory.Info, t *thermostat) *accessory.Thermostat {
@@ -124,9 +124,9 @@ func newLogger() *logrus.Logger {
 }
 
 func printPIN(pin string) {
-	fmt.Printf("      ┌────────────┐\n")
-	fmt.Printf("      | %08s |\n", pin)
-	fmt.Printf("      └────────────┘\n")
+	fmt.Printf("\n      ┌────────────┐\n")
+	fmt.Printf("      | %08s   |\n", pin)
+	fmt.Printf("      └────────────┘\n\n")
 }
 
 func pollForHiveUpdates(ctx context.Context, thermostat *thermostat, acc *accessory.Thermostat, logger *logrus.Logger) {
