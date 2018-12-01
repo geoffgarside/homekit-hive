@@ -72,7 +72,6 @@ func main() {
 	}
 
 	hc.OnTermination(func() {
-		logger.Infof("request to terminate received, stopping transport")
 		<-transport.Stop()
 		logger.Infof("transport stopped")
 	})
