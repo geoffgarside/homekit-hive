@@ -135,3 +135,69 @@ func Test_nodeAttribute(t *testing.T) {
 		})
 	}
 }
+
+func Test_nodeAttribute_int64(t *testing.T) {
+	tests := []struct {
+		name   string
+		v      interface{}
+		wantI  int64
+		wantOk bool
+	}{
+		{"Int", int(10), 10, true},
+		{"Int8", int8(125), 125, true},
+		{"Int16", int16(32670), 32670, true},
+		{"Int32", int32(2147483640), 2147483640, true},
+		{"Int64", int64(9223372036854775800), 9223372036854775800, true},
+		{"IntNeg", int(-10), -10, true},
+		{"Int8Neg", int8(-125), -125, true},
+		{"Int16Neg", int16(-32670), -32670, true},
+		{"Int32Neg", int32(-2147483640), -2147483640, true},
+		{"Int64Neg", int64(-9223372036854775800), -9223372036854775800, true},
+		{"Other", "no", 0, false},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			na := &nodeAttribute{}
+			gotI, gotOk := na.int64(tt.v)
+			if gotI != tt.wantI {
+				t.Errorf("nodeAttribute.int64() gotI = %v, want %v", gotI, tt.wantI)
+			}
+			if gotOk != tt.wantOk {
+				t.Errorf("nodeAttribute.int64() gotOk = %v, want %v", gotOk, tt.wantOk)
+			}
+		})
+	}
+}
+
+func Test_nodeAttribute_uint64(t *testing.T) {
+	tests := []struct {
+		name   string
+		v      interface{}
+		wantI  uint64
+		wantOk bool
+	}{
+		{"Uint", uint(10), 10, true},
+		{"Uint8", uint8(250), 250, true},
+		{"Uint16", uint16(65530), 65530, true},
+		{"Uint32", uint32(4294967290), 4294967290, true},
+		{"Uint64", uint64(18446744073709551610), 18446744073709551610, true},
+		{"Int", int(10), 10, true},
+		{"Int8", int8(125), 125, true},
+		{"Int16", int16(32670), 32670, true},
+		{"Int32", int32(2147483640), 2147483640, true},
+		{"Int64", int64(9223372036854775800), 9223372036854775800, true},
+		{"Other", "no", 0, false},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			na := &nodeAttribute{}
+			gotI, gotOk := na.uint64(tt.v)
+			if gotI != tt.wantI {
+				t.Errorf("nodeAttribute.uint64() gotI = %v, want %v", gotI, tt.wantI)
+			}
+			if gotOk != tt.wantOk {
+				t.Errorf("nodeAttribute.uint64() gotOk = %v, want %v", gotOk, tt.wantOk)
+			}
+		})
+	}
+}
