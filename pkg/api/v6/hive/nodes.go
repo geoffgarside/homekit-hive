@@ -11,7 +11,7 @@ type nodesResponse struct {
 }
 
 func (home *Home) nodes() ([]*node, error) {
-	resp, err := home.httpRequest(http.MethodGet, "/omnia/nodes", nil)
+	resp, err := home.httpRequestWithSession(http.MethodGet, "/omnia/nodes", nil)
 	if err != nil {
 		return nil, &Error{Op: "node: response", Err: err}
 	}
@@ -32,7 +32,7 @@ func (home *Home) node(href string) (*node, error) {
 		return nil, &Error{Op: "node: request", Err: err}
 	}
 
-	resp, err := home.httpRequest(http.MethodGet, uri.RequestURI(), nil)
+	resp, err := home.httpRequestWithSession(http.MethodGet, uri.RequestURI(), nil)
 	if err != nil {
 		return nil, &Error{Op: "node: response", Err: err}
 	}
