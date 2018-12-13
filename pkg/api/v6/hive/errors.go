@@ -21,6 +21,7 @@ const (
 const (
 	ErrMissingParameter   = "MISSING_PARAMETER"
 	ErrInvalidCredentials = "USERNAME_PASSWORD_ERROR"
+	ErrNotAuthorized      = "NOT_AUTHORIZED"
 )
 
 // Error defines a standard application error.
