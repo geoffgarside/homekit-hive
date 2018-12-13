@@ -128,3 +128,26 @@ func (home *Home) httpRequest(method, path string, body io.Reader) (*http.Respon
 
 	return resp, nil
 }
+
+func (home *Home) httpRequestWithSession(method, path string, body io.ReadSeeker) (*http.Response, error) {
+	resp, err := home.httpRequest(method, path, body)
+
+	if ErrorCode(err) == ErrNotAuthorized {
+		if err := home.login(); err != nil {
+			return nil, err
+		}
+
+		if body != nil {
+			if _, err := body.Seek(0, io.SeekStart); err != nil {
+				return nil, &Error{
+					Err: err,
+					Op:  "home: request retry: seek",
+				}
+			}
+		}
+
+		return home.httpRequest(method, path, body)
+	}
+
+	return resp, err
+}
