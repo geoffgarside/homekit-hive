@@ -26,12 +26,16 @@ func main() {
 		username     string
 		password     string
 		homekitPIN   string
+		storagePath  string
+		addr         string
 		debugLogging bool
 	)
 
 	flag.StringVar(&username, "u", os.Getenv("HIVE_USERNAME"), "hive username")
 	flag.StringVar(&password, "p", os.Getenv("HIVE_PASSWORD"), "hive password")
 	flag.StringVar(&homekitPIN, "pin", os.Getenv("HOMEKIT_PIN"), "homekit pin")
+	flag.StringVar(&storagePath, "path", os.Getenv("STORAGE_PATH"), "storage path, defaults to \"Hive Thermostat\"")
+	flag.StringVar(&addr, "listen", os.Getenv("LISTEN_ADDR"), "listen address ip:port, defaults to :0")
 	flag.BoolVar(&debugLogging, "debug", false, "enable debug logging")
 	flag.Parse()
 
@@ -68,8 +72,18 @@ func main() {
 
 	go pollForHiveUpdates(ctx, thermostat, acc, logger)
 
+	host, port, err := net.SplitHostPort(addr)
+	if err != nil {
+		logger.WithError(err).Warnf("error parsing %v, using default IP:PORT", addr)
+	}
+
 	transport, err := hc.NewIPTransport(
-		hc.Config{Pin: homekitPIN},
+		hc.Config{
+			StoragePath: storagePath,
+			IP:          host,
+			Port:        port,
+			Pin:         homekitPIN,
+		},
 		acc.Accessory,
 	)
 
