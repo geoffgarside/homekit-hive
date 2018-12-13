@@ -198,7 +198,8 @@ func (home *Home) setThermostat(t *Thermostat, targetTemp float64) (*node, error
 		}
 	}
 
-	resp, err := home.httpRequest(http.MethodPut, uri.RequestURI(), buf)
+	rs := bytes.NewReader(buf.Bytes()) // convert JSON bytes into bytes.Reader to support io.ReadSeeker
+	resp, err := home.httpRequestWithSession(http.MethodPut, uri.RequestURI(), rs)
 	if err != nil {
 		return nil, &Error{
 			Op:  "thermostat: set temperature: request",
