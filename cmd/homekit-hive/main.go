@@ -7,7 +7,6 @@ import (
 	"net"
 	"net/http"
 	"os"
-	"runtime"
 	"time"
 
 	"github.com/brutella/hc"
@@ -19,6 +18,7 @@ import (
 
 	"github.com/geoffgarside/homekit-hive/pkg/api/v6/hive"
 	"github.com/geoffgarside/homekit-hive/pkg/httpkit"
+	"github.com/geoffgarside/homekit-hive/pkg/version"
 )
 
 func main() {
@@ -121,7 +121,7 @@ func newAccessory(info accessory.Info, t *thermostat) *accessory.Thermostat {
 }
 
 func httpClient() *http.Client {
-	userAgent := fmt.Sprintf("homekit-hive/1.0.0 (%v; %v/%v)", runtime.Version(), runtime.GOOS, runtime.GOARCH)
+	userAgent := version.HTTPUserAgent("homekit-hive")
 	return &http.Client{
 		Transport: httpkit.UserAgentTransport(userAgent, &http.Transport{
 			Dial: (&net.Dialer{
