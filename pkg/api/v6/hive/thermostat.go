@@ -137,6 +137,8 @@ func (t *Thermostat) Update() error {
 
 // Thermostats returns the list of thermostats in the Home
 func (home *Home) Thermostats() ([]*Thermostat, error) {
+	const nodeTypeThermostat = "http://alertme.com/schema/json/node.class.thermostat.json#"
+
 	nodes, err := home.nodes()
 	if err != nil {
 		return nil, err
@@ -145,6 +147,11 @@ func (home *Home) Thermostats() ([]*Thermostat, error) {
 	var thermostats []*Thermostat
 
 	for _, n := range nodes {
+		nt, err := n.NodeType()
+		if err != nil || nt != nodeTypeThermostat {
+			continue
+		}
+
 		if _, ok := n.Attributes["temperature"]; !ok {
 			continue
 		}
