@@ -35,12 +35,12 @@ func main() {
 	for _, t := range ts {
 		currentTemp, err := t.Temperature()
 		if err != nil {
-			log.Fatal(err)
+			log.Print(err)
 		}
 
 		targetTemp, err := t.Target()
 		if err != nil {
-			log.Fatal(err)
+			log.Print(err)
 		}
 
 		fmt.Printf("%v\t%v\t%v\t%v\n",
