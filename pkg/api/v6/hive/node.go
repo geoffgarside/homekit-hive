@@ -61,21 +61,16 @@ type nodeAttribute struct {
 func (na *nodeAttribute) int64(v interface{}) (i int64, ok bool) {
 	ok = true
 
-	switch v.(type) {
+	switch ii := v.(type) {
 	case int:
-		ii := v.(int)
 		i = int64(ii)
 	case int8:
-		ii := v.(int8)
 		i = int64(ii)
 	case int16:
-		ii := v.(int16)
 		i = int64(ii)
 	case int32:
-		ii := v.(int32)
 		i = int64(ii)
 	case int64:
-		ii := v.(int64)
 		i = int64(ii)
 	default:
 		ok = false
@@ -87,36 +82,26 @@ func (na *nodeAttribute) int64(v interface{}) (i int64, ok bool) {
 func (na *nodeAttribute) uint64(v interface{}) (i uint64, ok bool) {
 	ok = true
 
-	switch v.(type) {
+	switch ii := v.(type) {
 	case int:
-		ii := v.(int)
 		i = uint64(ii)
 	case uint:
-		ii := v.(uint)
 		i = uint64(ii)
 	case int8:
-		ii := v.(int8)
 		i = uint64(ii)
 	case uint8:
-		ii := v.(uint8)
 		i = uint64(ii)
 	case int16:
-		ii := v.(int16)
 		i = uint64(ii)
 	case uint16:
-		ii := v.(uint16)
 		i = uint64(ii)
 	case int32:
-		ii := v.(int32)
 		i = uint64(ii)
 	case uint32:
-		ii := v.(uint32)
 		i = uint64(ii)
 	case int64:
-		ii := v.(int64)
 		i = uint64(ii)
 	case uint64:
-		ii := v.(uint64)
 		i = uint64(ii)
 	default:
 		ok = false
