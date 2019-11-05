@@ -80,7 +80,7 @@ func (t *Thermostat) Temperature() (float64, error) {
 
 // Target returns the target temperature setting
 func (t *Thermostat) Target() (float64, error) {
-	v, ok := t.node.attr("targetHeatTemperature").TargetValueFloat()
+	v, ok := t.node.attr("targetHeatTemperature").ReportedValueFloat()
 	if !ok {
 		return t.Minimum(), &Error{
 			Op:      "thermostat: target temperature",

@@ -101,7 +101,7 @@ func TestThermostat_Target(t *testing.T) {
 				node: &node{
 					Attributes: nodeAttributes{
 						"targetHeatTemperature": &nodeAttribute{
-							TargetValue: tt.value,
+							ReportedValue: tt.value,
 						},
 					},
 				},
