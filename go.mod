@@ -1,15 +1,19 @@
 module github.com/geoffgarside/homekit-hive
 
+go 1.13
+
 require (
-	github.com/agl/ed25519 v0.0.0-20170116200512-5312a6153412 // indirect
-	github.com/brutella/dnssd v0.0.0-20180519095852-a1eecd10aafc // indirect
-	github.com/brutella/hc v0.1.1-0.20180507062808-5b6df487276b
-	github.com/go-test/deep v1.0.1
-	github.com/gosexy/to v0.0.0-20141221203644-c20e083e3123 // indirect
-	github.com/miekg/dns v1.0.15 // indirect
-	github.com/sirupsen/logrus v1.2.0
-	github.com/tadglines/go-pkgs v0.0.0-20140924210655-1f86682992f1 // indirect
-	golang.org/x/crypto v0.0.0-20180927165925-5295e8364332 // indirect
-	golang.org/x/net v0.0.0-20181114220301-adae6a3d119a // indirect
-	golang.org/x/sys v0.0.0-20180928133829-e4b3c5e90611 // indirect
+	github.com/brutella/hc v1.2.0
+	github.com/go-test/deep v1.0.4
+	github.com/konsorten/go-windows-terminal-sequences v1.0.2 // indirect
+	github.com/kr/pretty v0.1.0 // indirect
+	github.com/miekg/dns v1.1.22 // indirect
+	github.com/sirupsen/logrus v1.4.2
+	github.com/stretchr/testify v1.4.0 // indirect
+	golang.org/x/crypto v0.0.0-20191105034135-c7e5f84aec59 // indirect
+	golang.org/x/net v0.0.0-20191105084925-a882066a44e0 // indirect
+	golang.org/x/sync v0.0.0-20190911185100-cd5d95a43a6e // indirect
+	golang.org/x/sys v0.0.0-20191105142833-ac3223d80179 // indirect
+	gopkg.in/check.v1 v1.0.0-20190902080502-41f04d3bba15 // indirect
+	gopkg.in/yaml.v2 v2.2.5 // indirect
 )
