@@ -161,16 +161,17 @@ func pollForHiveUpdates(ctx context.Context, thermostat *thermostat, acc *access
 	tick := time.NewTicker(1 * time.Minute)
 
 	for {
+		if err := thermostat.update(); err != nil {
+			logger.Errorf("failed to update thermostat: %v", err)
+			continue
+		}
+
+		acc.Thermostat.TargetTemperature.SetValue(thermostat.getTarget())
+		acc.Thermostat.CurrentTemperature.SetValue(thermostat.getTemp())
+		acc.Thermostat.CurrentHeatingCoolingState.SetValue(thermostat.getMode())
+
 		select {
 		case <-tick.C:
-			if err := thermostat.update(); err != nil {
-				logger.Errorf("failed to update thermostat: %v", err)
-				continue
-			}
-
-			acc.Thermostat.TargetTemperature.SetValue(thermostat.getTarget())
-			acc.Thermostat.CurrentTemperature.SetValue(thermostat.getTemp())
-			acc.Thermostat.CurrentHeatingCoolingState.SetValue(thermostat.getMode())
 		case <-ctx.Done():
 			tick.Stop()
 			return
