@@ -2,7 +2,7 @@ HomeKit - Hive
 ==============
 
 [![GoDoc](https://godoc.org/github.com/geoffgarside/homekit-hive?status.svg)](https://godoc.org/github.com/geoffgarside/homekit-hive)
-[![Build Status](https://travis-ci.org/geoffgarside/homekit-hive.svg?branch=master)](https://travis-ci.org/geoffgarside/homekit-hive)
+![Build Status](https://github.com/geoffgarside/homekit-hive/workflows/Go/badge.svg)
 [![Maintainability](https://api.codeclimate.com/v1/badges/efd283c94c923e7a68c7/maintainability)](https://codeclimate.com/github/geoffgarside/homekit-hive/maintainability)
 [![Test Coverage](https://api.codeclimate.com/v1/badges/efd283c94c923e7a68c7/test_coverage)](https://codeclimate.com/github/geoffgarside/homekit-hive/test_coverage)
 
