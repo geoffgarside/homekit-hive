@@ -14,7 +14,7 @@ var (
 	BuildHash string
 )
 
-var uaReplacer = regexp.MustCompile(`[^a-z0-9\.\-/]`)
+var uaReplacer = regexp.MustCompile(`[^a-z0-9.\-/]`)
 
 // HTTPUserAgent returns a HTTP User-Agent for the product using
 // the Number, BuildDate and BuildHash.
