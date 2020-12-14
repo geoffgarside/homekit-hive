@@ -11,7 +11,7 @@ import (
 
 	"github.com/brutella/hc"
 	"github.com/brutella/hc/accessory"
-	hclog "github.com/brutella/hc/log"
+	log "github.com/brutella/hc/log"
 	"github.com/brutella/hc/service"
 
 	"github.com/sirupsen/logrus"
@@ -140,13 +140,13 @@ func newLogger() *logrus.Logger {
 		FullTimestamp: true,
 	})
 
-	hclog.Info.SetOutput(logger.WriterLevel(logrus.InfoLevel))
-	hclog.Info.SetPrefix("")
-	hclog.Info.SetFlags(0)
+	log.Info.SetOutput(logger.WriterLevel(logrus.InfoLevel))
+	log.Info.SetPrefix("")
+	log.Info.SetFlags(0)
 
-	hclog.Debug.SetOutput(logger.WriterLevel(logrus.DebugLevel))
-	hclog.Debug.SetPrefix("")
-	hclog.Debug.SetFlags(0)
+	log.Debug.SetOutput(logger.WriterLevel(logrus.DebugLevel))
+	log.Debug.SetPrefix("")
+	log.Debug.SetFlags(0)
 
 	return logger
 }
