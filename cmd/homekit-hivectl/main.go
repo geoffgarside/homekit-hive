@@ -47,6 +47,21 @@ func main() {
 			t.ID, t.Name, currentTemp, targetTemp)
 	}
 
+	rads, err := c.Radiators()
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	for _, r := range rads {
+		currentTemp, err := r.Temperature()
+		if err != nil {
+			log.Print(err)
+		}
+
+		fmt.Printf("%v\t%v\t%v\n",
+			r.ID, r.Name, currentTemp)
+	}
+
 	if setTemp > 0 {
 		if err := ts[0].SetTarget(setTemp); err != nil {
 			log.Fatal(err)
