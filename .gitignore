@@ -1,4 +1,6 @@
 *.log
+.vscode
+.idea
 
 # Build artifacts
 homekit-hive
